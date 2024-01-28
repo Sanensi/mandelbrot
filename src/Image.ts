@@ -1,3 +1,4 @@
+import { Color } from "./ColorGradient";
 import { Vec2 } from "./Vec2";
 import { assert } from "./assertions";
 
@@ -10,7 +11,7 @@ export class Image {
     this.imageData = ctx.createImageData(this.size.x, this.size.y);
   }
 
-  setPixel(p: Vec2, r: number, g: number, b: number, a = 255) {
+  setPixel(p: Vec2, { r, g, b }: Color, a = 255) {
     assert(0 <= p.x && p.x < this.size.x && 0 <= p.y && p.y < this.size.y);
     assert(0 <= r && r <= 255);
     assert(0 <= g && g <= 255);
