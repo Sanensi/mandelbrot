@@ -11,29 +11,19 @@ const colorGradient = new ColorGradient([
 ]);
 
 export function getMandelbrotColor(c: Vec2): Color {
-  let p = c;
+  const m = mandelbrot(c);
 
   for (let i = 0; i <= MAX_ITERATION; i++) {
+    const p = m.next().value;
+
     if (p.length() > 2) {
       return colorGradient.getValue(
         (100 * (MAX_ITERATION - i)) / MAX_ITERATION,
       );
     }
-
-    p = new Vec2(p.x * p.x - p.y * p.y, 2 * p.x * p.y).add(c);
   }
 
   return { r: 0, g: 0, b: 0 };
-}
-
-export function isInMandelbrot(p: Vec2) {
-  for (let i = 0; i <= MAX_ITERATION; i++) {
-    const p_prime = mandelbrotIterations(i, p);
-    if (p_prime.length() > 2) {
-      return false;
-    }
-  }
-  return true;
 }
 
 export function mandelbrotIterations(iterations: number, c: Vec2): Vec2 {
@@ -44,4 +34,13 @@ export function mandelbrotIterations(iterations: number, c: Vec2): Vec2 {
   }
 
   return p;
+}
+
+function* mandelbrot(c: Vec2): Generator<Vec2, never> {
+  let p = c;
+
+  while (true) {
+    p = new Vec2(p.x * p.x - p.y * p.y, 2 * p.x * p.y).add(c);
+    yield p;
+  }
 }
