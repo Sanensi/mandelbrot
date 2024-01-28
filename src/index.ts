@@ -12,6 +12,8 @@ canvas.height = canvas.clientHeight;
 const offset = new Vec2(canvas.width / 2, canvas.height / 2);
 const scale = Vec2.ONE.scale(200);
 
+performance.mark("render-start");
+
 const image = new Image(ctx);
 
 for (let y = 0; y < canvas.height; y++) {
@@ -24,3 +26,11 @@ for (let y = 0; y < canvas.height; y++) {
 }
 
 ctx.putImageData(image.imageData, 0, 0);
+
+performance.mark("render-end");
+
+const measure = performance.measure("render", {
+  start: "render-start",
+  end: "render-end",
+});
+console.log(measure.duration);

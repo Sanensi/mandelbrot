@@ -10,15 +10,19 @@ const colorGradient = new ColorGradient([
   { percent: 100, color: { r: 255, g: 255, b: 255 } },
 ]);
 
-export function getMandelbrotColor(p: Vec2): Color {
+export function getMandelbrotColor(c: Vec2): Color {
+  let p = c;
+
   for (let i = 0; i <= MAX_ITERATION; i++) {
-    const p_prime = mandelbrotIterations(i, p);
-    if (p_prime.length() > 2) {
+    if (p.length() > 2) {
       return colorGradient.getValue(
         (100 * (MAX_ITERATION - i)) / MAX_ITERATION,
       );
     }
+
+    p = new Vec2(p.x * p.x - p.y * p.y, 2 * p.x * p.y).add(c);
   }
+
   return { r: 0, g: 0, b: 0 };
 }
 
