@@ -12,25 +12,36 @@ canvas.height = canvas.clientHeight;
 const offset = new Vec2(canvas.width / 2, canvas.height / 2);
 const scale = Vec2.ONE.scale(200);
 
-performance.mark("render-start");
-
 const image = new Image(ctx);
 
-for (let y = 0; y < canvas.height; y++) {
-  for (let x = 0; x < canvas.width; x++) {
-    const p = new Vec2(x, y);
-    const p_prime = p.substract(offset).divide(scale);
-    const color = getMandelbrotColor(p_prime);
-    image.setPixel(p, color);
-  }
+measurableRender();
+
+window.addEventListener("resize", () => {
+  canvas.width = canvas.clientWidth;
+  canvas.height = canvas.clientHeight;
+
+  measurableRender();
+});
+
+function measurableRender() {
+  measure(render);
 }
 
-ctx.putImageData(image.imageData, 0, 0);
+function render() {
+  for (let y = 0; y < canvas.height; y++) {
+    for (let x = 0; x < canvas.width; x++) {
+      const p = new Vec2(x, y);
+      const p_prime = p.substract(offset).divide(scale);
+      const color = getMandelbrotColor(p_prime);
+      image.setPixel(p, color);
+    }
+  }
 
-performance.mark("render-end");
+  ctx.putImageData(image.imageData, 0, 0);
+}
 
-const measure = performance.measure("render", {
-  start: "render-start",
-  end: "render-end",
-});
-console.log(measure.duration);
+function measure(f: () => void) {
+  const start = performance.now();
+  f();
+  console.log(f.name, performance.now() - start);
+}

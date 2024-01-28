@@ -12,7 +12,6 @@ export class Image {
   }
 
   setPixel(p: Vec2, { r, g, b }: Color, a = 255) {
-    assert(0 <= p.x && p.x < this.size.x && 0 <= p.y && p.y < this.size.y);
     assert(0 <= r && r <= 255);
     assert(0 <= g && g <= 255);
     assert(0 <= b && b <= 255);
