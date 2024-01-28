@@ -1,6 +1,6 @@
 import { Color } from "./ColorGradient";
-import { Vec2 } from "./Vec2";
-import { assert } from "./assertions";
+import { Vec2 } from "../Vec2";
+import { assert } from "../assertions";
 
 export class Image {
   private readonly size: Vec2;

@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { mandelbrotIterations } from "./mandelbrot";
-import { Vec2 } from "./Vec2";
+import { Vec2 } from "../Vec2";
 
 describe("mandelbrotIterations", () => {
   describe("Any number of iteration on the origin remains on the origin", () => {

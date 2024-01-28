@@ -1,5 +1,5 @@
 import { Color, ColorGradient } from "./ColorGradient";
-import { Vec2 } from "./Vec2";
+import { Vec2 } from "../Vec2";
 
 const MAX_ITERATION = 100;
 

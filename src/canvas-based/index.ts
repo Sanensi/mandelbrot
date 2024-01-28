@@ -1,6 +1,6 @@
 import { Image } from "./Image";
-import { Vec2 } from "./Vec2";
-import { throwError } from "./assertions";
+import { Vec2 } from "../Vec2";
+import { throwError } from "../assertions";
 import { getMandelbrotColor } from "./mandelbrot";
 
 const canvas = document.querySelector("canvas") ?? throwError();
