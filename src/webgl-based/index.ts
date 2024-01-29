@@ -52,9 +52,6 @@ function main() {
   const screenSizeLocation = gl.getUniformLocation(program, "screen_size");
   gl.uniform2fv(screenSizeLocation, [canvas.width, canvas.height]);
 
-  gl.clearColor(1.0, 1.0, 1.0, 1.0);
-  gl.clear(gl.COLOR_BUFFER_BIT);
-
   gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 }
 
