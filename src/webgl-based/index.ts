@@ -42,19 +42,19 @@ function main() {
   const screenSizeLocation = gl.getUniformLocation(program, "screen_size");
   gl.uniform2fv(screenSizeLocation, [canvas.width, canvas.height]);
 
-  const screenVertices = [-1.0, -1.0, 1.0, -1.0, -1.0, 1.0, 1.0, 1.0];
   const positionAttributeLocation = gl.getAttribLocation(program, "position");
   gl.enableVertexAttribArray(positionAttributeLocation);
 
-  const positionBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-  gl.bufferData(
-    gl.ARRAY_BUFFER,
-    new Float32Array(screenVertices),
-    gl.STATIC_DRAW,
+  const POSITION_ATTRIBUTE_SIZE = 2;
+  const screenVertices = [-1.0, -1.0, 1.0, -1.0, -1.0, 1.0, 1.0, 1.0];
+
+  setScreenGeometry(
+    gl,
+    screenVertices,
+    positionAttributeLocation,
+    POSITION_ATTRIBUTE_SIZE,
   );
-  gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
-  gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+  drawScreen(gl, screenVertices, POSITION_ATTRIBUTE_SIZE);
 }
 
 function createProgram(gl: WebGLRenderingContext): WebGLProgram {
@@ -103,4 +103,39 @@ function createShader(
   }
 
   return shader;
+}
+
+function setScreenGeometry(
+  gl: WebGLRenderingContext,
+  positionBufferData: number[],
+  positionAttributeLocation: number,
+  positionAttributeSize: number,
+) {
+  const positionBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+  gl.bufferData(
+    gl.ARRAY_BUFFER,
+    new Float32Array(positionBufferData),
+    gl.STATIC_DRAW,
+  );
+  gl.vertexAttribPointer(
+    positionAttributeLocation,
+    positionAttributeSize,
+    gl.FLOAT,
+    false,
+    0,
+    0,
+  );
+}
+
+function drawScreen(
+  gl: WebGLRenderingContext,
+  screenVertices: number[],
+  positionAttributeSize: number,
+) {
+  gl.drawArrays(
+    gl.TRIANGLE_STRIP,
+    0,
+    screenVertices.length / positionAttributeSize,
+  );
 }
