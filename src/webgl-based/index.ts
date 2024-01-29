@@ -1,5 +1,5 @@
 import { throwError } from "../assertions";
-import fragmentShaderSource from "./gradient.glsl?raw";
+import fragmentShaderSource from "./mandelbrot.glsl?raw";
 
 const vertexShaderSource = `
 attribute vec4 position;
@@ -122,9 +122,11 @@ function drawScreen(
   screenVertices: number[],
   positionAttributeSize: number,
 ) {
+  const start = performance.now();
   gl.drawArrays(
     gl.TRIANGLE_STRIP,
     0,
     screenVertices.length / positionAttributeSize,
   );
+  console.log("render", performance.now() - start);
 }
