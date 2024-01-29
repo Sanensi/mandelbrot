@@ -9,8 +9,11 @@ void main() {
 
 const fragmentShaderSource = `
 precision mediump float;
+
+uniform vec2 screen_size;
+
 void main() {
-  vec2 normalized = gl_FragCoord.xy / vec2(300.0, 300.0);
+  vec2 normalized = gl_FragCoord.xy / vec2(screen_size.x, screen_size.y);
   gl_FragColor = vec4(normalized.x, 0.0, normalized.y, 1.0);
 }
 `;
@@ -19,8 +22,8 @@ main();
 
 function main() {
   const canvas = document.querySelector("canvas") ?? throwError();
-  canvas.width = 300;
-  canvas.height = 300;
+  canvas.width = canvas.clientWidth;
+  canvas.height = canvas.clientHeight;
 
   const gl = canvas.getContext("webgl") ?? throwError();
 
@@ -42,6 +45,9 @@ function main() {
   const positionAttributeLocation = gl.getAttribLocation(program, "a_position");
   gl.enableVertexAttribArray(positionAttributeLocation);
   gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
+
+  const screenSizeLocation = gl.getUniformLocation(program, "screen_size");
+  gl.uniform2fv(screenSizeLocation, [canvas.width, canvas.height]);
 
   gl.clearColor(1.0, 1.0, 1.0, 1.0);
   gl.clear(gl.COLOR_BUFFER_BIT);
