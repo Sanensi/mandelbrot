@@ -15,12 +15,18 @@ function main() {
   canvas.width = canvas.clientWidth;
   canvas.height = canvas.clientHeight;
 
+  const offset = [canvas.width / 2, canvas.height / 2];
+  const scale = [200.0, 200.0];
+
   const gl = canvas.getContext("webgl") ?? throwError();
   const program = createProgram(gl);
   gl.useProgram(program);
 
-  const screenSizeLocation = gl.getUniformLocation(program, "screen_size");
-  gl.uniform2fv(screenSizeLocation, [canvas.width, canvas.height]);
+  const offsetLocation = gl.getUniformLocation(program, "offset");
+  gl.uniform2fv(offsetLocation, offset);
+
+  const scaleLocation = gl.getUniformLocation(program, "scale");
+  gl.uniform2fv(scaleLocation, scale);
 
   const positionAttributeLocation = gl.getAttribLocation(program, "position");
   gl.enableVertexAttribArray(positionAttributeLocation);

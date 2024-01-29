@@ -1,11 +1,30 @@
 precision mediump float;
+
+vec4 getMandelbrotColor(vec2 c);
 vec4 colorGradient(const float value);
 
-uniform vec2 screen_size;
+uniform vec2 offset;
+uniform vec2 scale;
+
+const int MAX_ITERATION = 100;
 
 void main() {
-  vec2 normalized = gl_FragCoord.xy / vec2(screen_size.x, screen_size.y);
-  gl_FragColor = colorGradient(normalized.x);
+  vec2 c = (gl_FragCoord.xy - offset) / scale;
+  gl_FragColor = getMandelbrotColor(c);
+}
+
+vec4 getMandelbrotColor(vec2 c) {
+  vec2 p = c;
+
+  for(int i = 0; i <= MAX_ITERATION; i++) {
+    p = vec2(p.x * p.x - p.y * p.y, 2.0 * p.x * p.y) + c;
+
+    if(length(p) > 2.0) {
+      return vec4(1.0, 1.0, 1.0, 1.0);
+    }
+  }
+
+  return vec4(0.0, 0.0, 0.0, 1.0);
 }
 
 vec4 colorGradient(const float value) {
