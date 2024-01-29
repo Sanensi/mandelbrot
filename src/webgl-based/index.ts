@@ -36,14 +36,7 @@ function main() {
   canvas.height = canvas.clientHeight;
 
   const gl = canvas.getContext("webgl") ?? throwError();
-
-  const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
-  const fragmentShader = createShader(
-    gl,
-    gl.FRAGMENT_SHADER,
-    fragmentShaderSource,
-  );
-  const program = createProgram(gl, vertexShader, fragmentShader);
+  const program = createProgram(gl);
   gl.useProgram(program);
 
   const positionBuffer = gl.createBuffer();
@@ -87,11 +80,14 @@ function createShader(
   return shader;
 }
 
-function createProgram(
-  gl: WebGLRenderingContext,
-  vertexShader: WebGLShader,
-  fragmentShader: WebGLShader,
-): WebGLProgram {
+function createProgram(gl: WebGLRenderingContext): WebGLProgram {
+  const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+  const fragmentShader = createShader(
+    gl,
+    gl.FRAGMENT_SHADER,
+    fragmentShaderSource,
+  );
+
   const program = gl.createProgram();
   if (!program) {
     throw new Error("Unable to create shader program");
