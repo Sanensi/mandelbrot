@@ -22,7 +22,7 @@ function main() {
   canvas.width = 300;
   canvas.height = 300;
 
-  const gl = canvas.getContext("webgl2") ?? throwError();
+  const gl = canvas.getContext("webgl") ?? throwError();
 
   const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
   const fragmentShader = createShader(
@@ -38,9 +38,6 @@ function main() {
 
   const positions = [-1.0, -1.0, 1.0, -1.0, -1.0, 1.0, 1.0, 1.0];
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
-
-  const vao = gl.createVertexArray();
-  gl.bindVertexArray(vao);
 
   const positionAttributeLocation = gl.getAttribLocation(program, "a_position");
   gl.enableVertexAttribArray(positionAttributeLocation);
