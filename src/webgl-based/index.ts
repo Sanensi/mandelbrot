@@ -14,7 +14,17 @@ uniform vec2 screen_size;
 
 void main() {
   vec2 normalized = gl_FragCoord.xy / vec2(screen_size.x, screen_size.y);
-  gl_FragColor = vec4(normalized.x, 0.0, normalized.y, 1.0);
+
+  float black_to_red = smoothstep(0.0, 0.33, normalized.x);
+  float red_to_blue = smoothstep(0.33, 0.66, normalized.x);
+  float blue_to_white = smoothstep(0.66, 1.0, normalized.x);
+
+  vec3 color = mix(vec3(0.0, 0.0, 0.0), vec3(1.0, 0.0, 0.0), black_to_red);
+  color = mix(color, vec3(0.0, 0.0, 1.0), red_to_blue);
+  color = mix(color, vec3(1.0, 1.0, 1.0), blue_to_white);
+
+  // Set the final color
+  gl_FragColor = vec4(color, 1.0);
 }
 `;
 
