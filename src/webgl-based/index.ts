@@ -10,10 +10,47 @@ void main() {
 const fragmentShaderSource = `
 precision mediump float;
 void main() {
-  vec2 st = gl_FragCoord.xy / vec2(300.0, 300.0);
-  gl_FragColor = vec4(st.x, 0.0, st.y, 1.0);
+  vec2 normalized = gl_FragCoord.xy / vec2(300.0, 300.0);
+  gl_FragColor = vec4(normalized.x, 0.0, normalized.y, 1.0);
 }
 `;
+
+main();
+
+function main() {
+  const canvas = document.querySelector("canvas") ?? throwError();
+  canvas.width = 300;
+  canvas.height = 300;
+
+  const gl = canvas.getContext("webgl2") ?? throwError();
+
+  const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+  const fragmentShader = createShader(
+    gl,
+    gl.FRAGMENT_SHADER,
+    fragmentShaderSource,
+  );
+  const program = createProgram(gl, vertexShader, fragmentShader);
+  gl.useProgram(program);
+
+  const positionBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+
+  const positions = [-1.0, -1.0, 1.0, -1.0, -1.0, 1.0, 1.0, 1.0];
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+
+  const vao = gl.createVertexArray();
+  gl.bindVertexArray(vao);
+
+  const positionAttributeLocation = gl.getAttribLocation(program, "a_position");
+  gl.enableVertexAttribArray(positionAttributeLocation);
+  gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
+
+  gl.clearColor(1.0, 1.0, 1.0, 1.0);
+  gl.clear(gl.COLOR_BUFFER_BIT);
+
+  gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+}
 
 function createShader(
   gl: WebGLRenderingContext,
@@ -59,44 +96,3 @@ function createProgram(
 
   return program;
 }
-
-function main() {
-  const canvas = document.querySelector("canvas") ?? throwError();
-  canvas.width = 300;
-  canvas.height = 300;
-
-  const gl =
-    canvas.getContext("webgl2") ??
-    throwError("Unable to initialize WebGL. Your browser may not support it.");
-
-  const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
-  const fragmentShader = createShader(
-    gl,
-    gl.FRAGMENT_SHADER,
-    fragmentShaderSource,
-  );
-
-  const program = createProgram(gl, vertexShader, fragmentShader);
-  gl.useProgram(program);
-
-  const positionAttributeLocation = gl.getAttribLocation(program, "a_position");
-  const positionBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-
-  const positions = [-1.0, -1.0, 1.0, -1.0, -1.0, 1.0, 1.0, 1.0];
-
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
-
-  const vao = gl.createVertexArray();
-  gl.bindVertexArray(vao);
-
-  gl.enableVertexAttribArray(positionAttributeLocation);
-  gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
-
-  gl.clearColor(1.0, 1.0, 1.0, 1.0);
-  gl.clear(gl.COLOR_BUFFER_BIT);
-
-  gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-}
-
-main();
