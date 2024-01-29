@@ -1,5 +1,5 @@
 import { throwError } from "../assertions";
-import fragmentShaderSource from "./mandelbrot.glsl?raw";
+import fragmentShaderSource from "./gradient.glsl?raw";
 
 const vertexShaderSource = `
 attribute vec4 position;
@@ -21,6 +21,9 @@ function main() {
   const gl = canvas.getContext("webgl") ?? throwError();
   const program = createProgram(gl);
   gl.useProgram(program);
+
+  const screenSizeLocation = gl.getUniformLocation(program, "screen_size");
+  gl.uniform2fv(screenSizeLocation, [canvas.width, canvas.height]);
 
   const offsetLocation = gl.getUniformLocation(program, "offset");
   gl.uniform2fv(offsetLocation, offset);
