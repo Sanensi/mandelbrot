@@ -39,42 +39,18 @@ function main() {
   const program = createProgram(gl);
   gl.useProgram(program);
 
-  const positionBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-
-  const positions = [-1.0, -1.0, 1.0, -1.0, -1.0, 1.0, 1.0, 1.0];
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
-
-  const positionAttributeLocation = gl.getAttribLocation(program, "a_position");
-  gl.enableVertexAttribArray(positionAttributeLocation);
-  gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
-
   const screenSizeLocation = gl.getUniformLocation(program, "screen_size");
   gl.uniform2fv(screenSizeLocation, [canvas.width, canvas.height]);
 
+  const positions = [-1.0, -1.0, 1.0, -1.0, -1.0, 1.0, 1.0, 1.0];
+  const positionAttributeLocation = gl.getAttribLocation(program, "a_position");
+  gl.enableVertexAttribArray(positionAttributeLocation);
+
+  const positionBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+  gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
   gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-}
-
-function createShader(
-  gl: WebGLRenderingContext,
-  type: number,
-  source: string,
-): WebGLShader {
-  const shader = gl.createShader(type);
-  if (!shader) {
-    throw new Error(`Unable to create shader of type ${type}`);
-  }
-
-  gl.shaderSource(shader, source);
-  gl.compileShader(shader);
-
-  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-    const error = gl.getShaderInfoLog(shader);
-    gl.deleteShader(shader);
-    throw new Error(`Shader compilation failed: ${error}`);
-  }
-
-  return shader;
 }
 
 function createProgram(gl: WebGLRenderingContext): WebGLProgram {
@@ -101,4 +77,26 @@ function createProgram(gl: WebGLRenderingContext): WebGLProgram {
   }
 
   return program;
+}
+
+function createShader(
+  gl: WebGLRenderingContext,
+  type: number,
+  source: string,
+): WebGLShader {
+  const shader = gl.createShader(type);
+  if (!shader) {
+    throw new Error(`Unable to create shader of type ${type}`);
+  }
+
+  gl.shaderSource(shader, source);
+  gl.compileShader(shader);
+
+  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+    const error = gl.getShaderInfoLog(shader);
+    gl.deleteShader(shader);
+    throw new Error(`Shader compilation failed: ${error}`);
+  }
+
+  return shader;
 }
