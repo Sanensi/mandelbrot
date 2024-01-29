@@ -1,9 +1,9 @@
 import { throwError } from "../assertions";
 
 const vertexShaderSource = `
-attribute vec4 a_position;
+attribute vec4 position;
 void main() {
-  gl_Position = a_position;
+  gl_Position = position;
 }
 `;
 
@@ -42,13 +42,17 @@ function main() {
   const screenSizeLocation = gl.getUniformLocation(program, "screen_size");
   gl.uniform2fv(screenSizeLocation, [canvas.width, canvas.height]);
 
-  const positions = [-1.0, -1.0, 1.0, -1.0, -1.0, 1.0, 1.0, 1.0];
-  const positionAttributeLocation = gl.getAttribLocation(program, "a_position");
+  const screenVertices = [-1.0, -1.0, 1.0, -1.0, -1.0, 1.0, 1.0, 1.0];
+  const positionAttributeLocation = gl.getAttribLocation(program, "position");
   gl.enableVertexAttribArray(positionAttributeLocation);
 
   const positionBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+  gl.bufferData(
+    gl.ARRAY_BUFFER,
+    new Float32Array(screenVertices),
+    gl.STATIC_DRAW,
+  );
   gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
   gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 }
