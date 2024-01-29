@@ -1,5 +1,5 @@
 import { throwError } from "../assertions";
-import fragmentShaderSource from "./fragment.glsl?raw";
+import fragmentShaderSource from "./mandelbrot.glsl?raw";
 
 const vertexShaderSource = `
 attribute vec4 position;
