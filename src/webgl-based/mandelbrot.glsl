@@ -20,7 +20,7 @@ vec4 getMandelbrotColor(vec2 c) {
     p = vec2(p.x * p.x - p.y * p.y, 2.0 * p.x * p.y) + c;
 
     if(length(p) > 2.0) {
-      return vec4(1.0, 1.0, 1.0, 1.0);
+      return colorGradient(float(MAX_ITERATION - i) / float(MAX_ITERATION));
     }
   }
 

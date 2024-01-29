@@ -16,7 +16,7 @@ function main() {
   canvas.height = canvas.clientHeight;
 
   const offset = [canvas.width / 2, canvas.height / 2];
-  const scale = [200.0, 200.0];
+  const scale = [250.0, 250.0];
 
   const gl = canvas.getContext("webgl") ?? throwError();
   const program = createProgram(gl);
