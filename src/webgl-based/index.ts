@@ -1,4 +1,4 @@
-import { throwError } from "../assertions";
+import { assert, throwError } from "../assertions";
 import fragmentShaderSource from "./mandelbrot.glsl?raw";
 
 const vertexShaderSource = `
@@ -10,7 +10,7 @@ void main() {
 
 main();
 
-function main() {
+async function main() {
   const canvas = document.querySelector("canvas") ?? throwError();
   canvas.width = canvas.clientWidth;
   canvas.height = canvas.clientHeight;
@@ -18,7 +18,7 @@ function main() {
   const offset = [canvas.width / 2, canvas.height / 2];
   const scale = [250.0, 250.0];
 
-  const gl = canvas.getContext("webgl") ?? throwError();
+  const gl = canvas.getContext("webgl2") ?? throwError();
   const program = createProgram(gl);
   gl.useProgram(program);
 
@@ -43,10 +43,16 @@ function main() {
     positionAttributeLocation,
     POSITION_ATTRIBUTE_SIZE,
   );
-  drawScreen(gl, screenVertices, POSITION_ATTRIBUTE_SIZE);
+
+  const query = measure(gl, () => {
+    drawScreen(gl, screenVertices, POSITION_ATTRIBUTE_SIZE);
+  });
+
+  await wait(1000);
+  readMeasurement(gl, query);
 }
 
-function createProgram(gl: WebGLRenderingContext): WebGLProgram {
+function createProgram(gl: WebGL2RenderingContext): WebGLProgram {
   const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
   const fragmentShader = createShader(
     gl,
@@ -73,7 +79,7 @@ function createProgram(gl: WebGLRenderingContext): WebGLProgram {
 }
 
 function createShader(
-  gl: WebGLRenderingContext,
+  gl: WebGL2RenderingContext,
   type: number,
   source: string,
 ): WebGLShader {
@@ -95,7 +101,7 @@ function createShader(
 }
 
 function setScreenGeometry(
-  gl: WebGLRenderingContext,
+  gl: WebGL2RenderingContext,
   positionBufferData: number[],
   positionAttributeLocation: number,
   positionAttributeSize: number,
@@ -118,15 +124,36 @@ function setScreenGeometry(
 }
 
 function drawScreen(
-  gl: WebGLRenderingContext,
+  gl: WebGL2RenderingContext,
   screenVertices: number[],
   positionAttributeSize: number,
 ) {
-  const start = performance.now();
   gl.drawArrays(
     gl.TRIANGLE_STRIP,
     0,
     screenVertices.length / positionAttributeSize,
   );
-  console.log("render", performance.now() - start);
+}
+
+function measure(gl: WebGL2RenderingContext, f: () => void) {
+  const ext = gl.getExtension("EXT_disjoint_timer_query_webgl2");
+  const query = gl.createQuery() ?? throwError();
+
+  gl.beginQuery(ext.TIME_ELAPSED_EXT, query);
+  f();
+  gl.endQuery(ext.TIME_ELAPSED_EXT);
+
+  return query;
+}
+
+function readMeasurement(gl: WebGL2RenderingContext, query: WebGLQuery) {
+  const available = gl.getQueryParameter(query, gl.QUERY_RESULT_AVAILABLE);
+  assert(available);
+
+  const elapsedNanos = gl.getQueryParameter(query, gl.QUERY_RESULT);
+  console.log(elapsedNanos / 1_000_000);
+}
+
+async function wait(ms: number) {
+  return new Promise<void>((resolve) => setTimeout(resolve, ms));
 }
