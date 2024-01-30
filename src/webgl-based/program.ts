@@ -1,5 +1,5 @@
 export function createProgram(
-  gl: WebGL2RenderingContext,
+  gl: WebGLRenderingContext,
   vertexShaderSource: string,
   fragmentShaderSource: string,
 ): WebGLProgram {
@@ -29,7 +29,7 @@ export function createProgram(
 }
 
 function createShader(
-  gl: WebGL2RenderingContext,
+  gl: WebGLRenderingContext,
   type: number,
   source: string,
 ): WebGLShader {

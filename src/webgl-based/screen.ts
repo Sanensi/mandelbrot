@@ -1,5 +1,5 @@
 export function setScreenGeometry(
-  gl: WebGL2RenderingContext,
+  gl: WebGLRenderingContext,
   positionBufferData: number[],
   positionAttributeLocation: number,
   positionAttributeSize: number,
@@ -22,7 +22,7 @@ export function setScreenGeometry(
 }
 
 export function drawScreen(
-  gl: WebGL2RenderingContext,
+  gl: WebGLRenderingContext,
   screenVertices: number[],
   positionAttributeSize: number,
 ) {
