@@ -3,26 +3,37 @@ import vertexShaderSource from "./shaders/screen.glsl?raw";
 import { throwError } from "../assertions";
 import { createProgram } from "./program";
 import { setScreenGeometry, drawScreen } from "./screen";
+import { Vec2 } from "../Vec2";
 
 main();
+
+type MouseState = {
+  previousPosition?: Vec2;
+};
+
+const mouseState: MouseState = {
+  previousPosition: undefined,
+};
 
 async function main() {
   const canvas = document.querySelector("canvas") ?? throwError();
   canvas.width = canvas.clientWidth;
   canvas.height = canvas.clientHeight;
 
-  const offset = [canvas.width / 2, canvas.height / 2];
-  const scale = [250.0, 250.0];
+  const gameState = {
+    offset: new Vec2(canvas.width / 2, canvas.height / 2),
+    scale: Vec2.ONE.scale(250),
+  };
 
-  const gl = canvas.getContext("webgl2") ?? throwError();
+  const gl = canvas.getContext("webgl") ?? throwError();
   const program = createProgram(gl, vertexShaderSource, fragmentShaderSource);
   gl.useProgram(program);
 
   const offsetLocation = gl.getUniformLocation(program, "offset");
-  gl.uniform2fv(offsetLocation, offset);
+  gl.uniform2fv(offsetLocation, [gameState.offset.x, gameState.offset.y]);
 
   const scaleLocation = gl.getUniformLocation(program, "scale");
-  gl.uniform2fv(scaleLocation, scale);
+  gl.uniform2fv(scaleLocation, [gameState.scale.x, gameState.scale.y]);
 
   const positionAttributeLocation = gl.getAttribLocation(program, "position");
   gl.enableVertexAttribArray(positionAttributeLocation);
@@ -39,6 +50,24 @@ async function main() {
 
   startRenderLoop(() => {
     drawScreen(gl, screenVertices, POSITION_ATTRIBUTE_SIZE);
+  });
+
+  canvas.addEventListener("mousedown", (e) => {
+    mouseState.previousPosition = new Vec2(e.clientX, e.clientY);
+  });
+  canvas.addEventListener("mousemove", (e) => {
+    if (mouseState.previousPosition) {
+      const p = new Vec2(e.clientX, e.clientY);
+      const delta = p
+        .substract(mouseState.previousPosition)
+        .divide(gameState.scale)
+        .scale(new Vec2(1, -1));
+      gameState.offset = gameState.offset.add(delta);
+      gl.uniform2fv(offsetLocation, [gameState.offset.x, gameState.offset.y]);
+    }
+  });
+  canvas.addEventListener("mouseup", () => {
+    mouseState.previousPosition = undefined;
   });
 }
 
