@@ -25,9 +25,6 @@ async function main() {
   const program = createProgram(gl, vertexShaderSource, fragmentShaderSource);
   gl.useProgram(program);
 
-  const screenSizeLocation = gl.getUniformLocation(program, "screen_size");
-  gl.uniform2fv(screenSizeLocation, [canvas.width, canvas.height]);
-
   const offsetLocation = gl.getUniformLocation(program, "offset");
   gl.uniform2fv(offsetLocation, offset);
 
