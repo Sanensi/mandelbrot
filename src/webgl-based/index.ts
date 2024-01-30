@@ -5,6 +5,8 @@ import { createProgram } from "./program";
 import { setScreenGeometry, drawScreen } from "./screen";
 import { Vec2 } from "../Vec2";
 
+let animationFrameId = 0;
+
 type MouseState = {
   previousPosition?: Vec2;
 };
@@ -31,10 +33,7 @@ async function main() {
   gl.useProgram(program);
 
   const offsetLocation = gl.getUniformLocation(program, "offset");
-  gl.uniform2fv(offsetLocation, [gameState.offset.x, gameState.offset.y]);
-
   const scaleLocation = gl.getUniformLocation(program, "scale");
-  gl.uniform2fv(scaleLocation, [gameState.scale.x, gameState.scale.y]);
 
   const positionAttributeLocation = gl.getAttribLocation(program, "position");
   gl.enableVertexAttribArray(positionAttributeLocation);
@@ -50,6 +49,9 @@ async function main() {
   );
 
   startRenderLoop(() => {
+    gl.uniform2fv(offsetLocation, [gameState.offset.x, gameState.offset.y]);
+    gl.uniform2fv(scaleLocation, [gameState.scale.x, gameState.scale.y]);
+
     drawScreen(gl, screenVertices, POSITION_ATTRIBUTE_SIZE);
   });
 
@@ -65,7 +67,6 @@ async function main() {
         .divide(gameState.scale)
         .scale(new Vec2(1, -1));
       gameState.offset = gameState.offset.add(delta);
-      gl.uniform2fv(offsetLocation, [gameState.offset.x, gameState.offset.y]);
     }
   };
 
@@ -79,7 +80,6 @@ async function main() {
     } else {
       gameState.scale = gameState.scale.scale(0.95);
     }
-    gl.uniform2fv(scaleLocation, [gameState.scale.x, gameState.scale.y]);
   };
 
   const onWebglContextLost = (e: Event) => {
@@ -93,6 +93,7 @@ async function main() {
     canvas.removeEventListener("wheel", onWheel);
     canvas.removeEventListener("webglcontextlost", onWebglContextLost);
     canvas.removeEventListener("webglcontextrestored", onWebglContextRestore);
+    cancelAnimationFrame(animationFrameId);
     main();
   };
 
@@ -107,9 +108,9 @@ async function main() {
 function startRenderLoop(render: (ms: number) => void) {
   const renderLoop = (ms: number) => {
     render(ms);
-    requestAnimationFrame(renderLoop);
+    animationFrameId = requestAnimationFrame(renderLoop);
   };
-  requestAnimationFrame(renderLoop);
+  animationFrameId = requestAnimationFrame(renderLoop);
 }
 
 async function wait(ms: number) {
