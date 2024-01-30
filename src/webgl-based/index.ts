@@ -1,14 +1,8 @@
+import fragmentShaderSource from "./shaders/mandelbrot.glsl?raw";
+import vertexShaderSource from "./shaders/screen.glsl?raw";
 import { throwError } from "../assertions";
-import fragmentShaderSource from "./mandelbrot.glsl?raw";
 import { createProgram } from "./program";
 import { setScreenGeometry, drawScreen } from "./screen";
-
-const vertexShaderSource = `
-attribute vec4 position;
-void main() {
-  gl_Position = position;
-}
-`;
 
 main();
 
