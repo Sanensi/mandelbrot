@@ -1,6 +1,5 @@
 import { throwError } from "../assertions";
 import fragmentShaderSource from "./mandelbrot.glsl?raw";
-import { measure, readMeasurement } from "./profiling";
 import { createProgram } from "./program";
 import { setScreenGeometry, drawScreen } from "./screen";
 
@@ -44,12 +43,17 @@ async function main() {
     POSITION_ATTRIBUTE_SIZE,
   );
 
-  const query = measure(gl, () => {
+  startRenderLoop(() => {
     drawScreen(gl, screenVertices, POSITION_ATTRIBUTE_SIZE);
   });
+}
 
-  await wait(1000);
-  readMeasurement(gl, query);
+function startRenderLoop(render: (ms: number) => void) {
+  const renderLoop = (ms: number) => {
+    render(ms);
+    requestAnimationFrame(renderLoop);
+  };
+  requestAnimationFrame(renderLoop);
 }
 
 async function wait(ms: number) {
