@@ -53,10 +53,11 @@ async function main() {
     drawScreen(gl, screenVertices, POSITION_ATTRIBUTE_SIZE);
   });
 
-  canvas.addEventListener("mousedown", (e) => {
+  const onMouseDown = (e: MouseEvent) => {
     mouseState.previousPosition = new Vec2(e.clientX, e.clientY);
-  });
-  canvas.addEventListener("mousemove", (e) => {
+  };
+
+  const onMouseMove = (e: MouseEvent) => {
     if (mouseState.previousPosition) {
       const p = new Vec2(e.clientX, e.clientY);
       const delta = p
@@ -66,19 +67,41 @@ async function main() {
       gameState.offset = gameState.offset.add(delta);
       gl.uniform2fv(offsetLocation, [gameState.offset.x, gameState.offset.y]);
     }
-  });
-  canvas.addEventListener("mouseup", () => {
-    mouseState.previousPosition = undefined;
-  });
+  };
 
-  canvas.addEventListener("wheel", (e) => {
+  const onMouseUp = () => {
+    mouseState.previousPosition = undefined;
+  };
+
+  const onWheel = (e: WheelEvent) => {
     if (e.deltaY < 0) {
       gameState.scale = gameState.scale.scale(1.05);
     } else {
       gameState.scale = gameState.scale.scale(0.95);
     }
     gl.uniform2fv(scaleLocation, [gameState.scale.x, gameState.scale.y]);
-  });
+  };
+
+  const onWebglContextLost = (e: Event) => {
+    e.preventDefault();
+  };
+
+  const onWebglContextRestore = () => {
+    canvas.removeEventListener("mousedown", onMouseDown);
+    canvas.removeEventListener("mousemove", onMouseMove);
+    canvas.removeEventListener("mouseup", onMouseUp);
+    canvas.removeEventListener("wheel", onWheel);
+    canvas.removeEventListener("webglcontextlost", onWebglContextLost);
+    canvas.removeEventListener("webglcontextrestored", onWebglContextRestore);
+    main();
+  };
+
+  canvas.addEventListener("mousedown", onMouseDown);
+  canvas.addEventListener("mousemove", onMouseMove);
+  canvas.addEventListener("mouseup", onMouseUp);
+  canvas.addEventListener("wheel", onWheel);
+  canvas.addEventListener("webglcontextlost", onWebglContextLost);
+  canvas.addEventListener("webglcontextrestored", onWebglContextRestore);
 }
 
 function startRenderLoop(render: (ms: number) => void) {
