@@ -3,13 +3,17 @@ import { assert, throwError } from "../assertions";
 import { getMandelbrotColor } from "./mandelbrot";
 import { Color } from "./ColorGradient";
 
+const maxIterationInput =
+  (document.getElementById("max-iteration") as HTMLInputElement) ??
+  throwError();
+
 const canvas = document.querySelector("canvas") ?? throwError();
 const ctx = canvas.getContext("2d") ?? throwError();
 
 canvas.width = canvas.clientWidth;
 canvas.height = canvas.clientHeight;
 
-const maxIteration = 100;
+let maxIteration = Number.parseInt(maxIterationInput.value);
 const offset = new Vec2(canvas.width / 2, canvas.height / 2);
 const scale = Vec2.ONE.scale(200);
 
@@ -17,7 +21,13 @@ const imageData = ctx.createImageData(canvas.width, canvas.height);
 
 render();
 
+maxIterationInput.addEventListener("change", () => {
+  maxIteration = Number.parseInt(maxIterationInput.value);
+  render();
+});
+
 function render() {
+  const start = performance.now();
   for (let y = 0; y < canvas.height; y++) {
     for (let x = 0; x < canvas.width; x++) {
       const p = new Vec2(x, y);
@@ -28,6 +38,7 @@ function render() {
   }
 
   ctx.putImageData(imageData, 0, 0);
+  console.log(performance.now() - start);
 }
 
 function setPixel(imageData: ImageData, p: Vec2, { r, g, b }: Color, a = 255) {

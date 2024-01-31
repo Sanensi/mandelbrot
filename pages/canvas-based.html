@@ -13,9 +13,22 @@
         height: 100%;
         display: block;
       }
+
+      .controls {
+        position: absolute;
+        margin: 10px;
+        padding: 5px;
+        background-color: white;
+      }
     </style>
   </head>
   <body>
+    <div class="controls">
+      <label>
+        Max iterations:
+        <input id="max-iteration" type="number" value="100" min="1" step="1" />
+      </label>
+    </div>
     <canvas></canvas>
     <script type="module" src="/src/canvas-based/index.ts"></script>
   </body>
