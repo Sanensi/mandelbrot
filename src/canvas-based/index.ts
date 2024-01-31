@@ -19,8 +19,10 @@ const ctx = canvas.getContext("2d") ?? throwError();
 canvas.width = canvas.clientWidth;
 canvas.height = canvas.clientHeight;
 
+const CANVAS_OFFSET = new Vec2(canvas.width / 2, canvas.height / 2);
+
 let maxIteration = Number.parseInt(maxIterationInput.value);
-let offset = new Vec2(canvas.width / 2, canvas.height / 2);
+let offset = Vec2.ZERO;
 let scale = Vec2.ONE.scale(Number.parseInt(scaleInput.value));
 
 const imageData = ctx.createImageData(canvas.width, canvas.height);
@@ -48,6 +50,12 @@ offsetYInput.addEventListener("change", () => {
   render();
 });
 
+canvas.addEventListener("click", (e) => {
+  const p = new Vec2(e.clientX, e.clientY);
+  const p_prime = canvasToMandelbrotCoord(p);
+  console.log(`(${p_prime.x}, ${p_prime.y})`);
+});
+
 render();
 
 function render() {
@@ -55,7 +63,7 @@ function render() {
   for (let y = 0; y < canvas.height; y++) {
     for (let x = 0; x < canvas.width; x++) {
       const p = new Vec2(x, y);
-      const p_prime = p.substract(offset).divide(scale);
+      const p_prime = canvasToMandelbrotCoord(p);
       const color = getMandelbrotColor(p_prime, maxIteration);
       setPixel(imageData, p, color);
     }
@@ -76,4 +84,8 @@ function setPixel(imageData: ImageData, p: Vec2, { r, g, b }: Color, a = 255) {
   imageData.data[i + 1] = g;
   imageData.data[i + 2] = b;
   imageData.data[i + 3] = a;
+}
+
+function canvasToMandelbrotCoord(p: Vec2) {
+  return p.substract(CANVAS_OFFSET).divide(scale).substract(offset);
 }
