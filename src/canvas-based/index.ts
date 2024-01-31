@@ -70,7 +70,7 @@ function render() {
   }
 
   ctx.putImageData(imageData, 0, 0);
-  console.log(performance.now() - start);
+  console.log("rendered in", performance.now() - start, "ms");
 }
 
 function setPixel(imageData: ImageData, p: Vec2, { r, g, b }: Color, a = 255) {
