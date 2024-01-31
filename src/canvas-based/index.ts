@@ -71,6 +71,22 @@ canvas.addEventListener("contextmenu", (e) => {
   render();
 });
 
+canvas.addEventListener("keypress", (e) => {
+  console.log(e.key);
+
+  switch (e.key) {
+    case "+":
+      scale = scale.scale(1.25);
+      break;
+    case "-":
+      scale = scale.scale(0.75);
+      break;
+  }
+
+  scaleInput.value = scale.x.toString();
+  render();
+});
+
 render();
 
 function render() {
