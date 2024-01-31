@@ -57,6 +57,14 @@ offsetYInput.addEventListener("change", () => {
 canvas.addEventListener("click", (e) => {
   const p = new Vec2(e.clientX, e.clientY);
   const p_prime = canvasToMandelbrotCoord(p);
+  console.log(p_prime);
+});
+
+canvas.addEventListener("contextmenu", (e) => {
+  e.preventDefault();
+  const p = new Vec2(e.clientX, e.clientY);
+  const p_prime = canvasToMandelbrotCoord(p);
+
   offset = p_prime.scale(-1);
   offsetXInput.value = offset.x.toString();
   offsetYInput.value = offset.y.toString();
