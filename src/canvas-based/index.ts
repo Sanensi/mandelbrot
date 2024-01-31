@@ -6,6 +6,8 @@ import { Color } from "./ColorGradient";
 const maxIterationInput =
   (document.getElementById("max-iteration") as HTMLInputElement) ??
   throwError();
+const scaleInput =
+  (document.getElementById("scale") as HTMLInputElement) ?? throwError();
 
 const canvas = document.querySelector("canvas") ?? throwError();
 const ctx = canvas.getContext("2d") ?? throwError();
@@ -15,7 +17,7 @@ canvas.height = canvas.clientHeight;
 
 let maxIteration = Number.parseInt(maxIterationInput.value);
 const offset = new Vec2(canvas.width / 2, canvas.height / 2);
-const scale = Vec2.ONE.scale(200);
+let scale = Vec2.ONE.scale(Number.parseInt(scaleInput.value));
 
 const imageData = ctx.createImageData(canvas.width, canvas.height);
 
@@ -23,6 +25,11 @@ render();
 
 maxIterationInput.addEventListener("change", () => {
   maxIteration = Number.parseInt(maxIterationInput.value);
+  render();
+});
+
+scaleInput.addEventListener("change", () => {
+  scale = Vec2.ONE.scale(Number.parseInt(scaleInput.value));
   render();
 });
 

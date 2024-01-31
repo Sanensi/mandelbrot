@@ -16,17 +16,37 @@
 
       .controls {
         position: absolute;
+        display: flex;
+        flex-direction: column;
+
         margin: 10px;
         padding: 5px;
         background-color: white;
+
+        :not(:last-child) {
+          margin-bottom: 5px;
+        }
+
+        label {
+          display: flex;
+          justify-content: space-between;
+
+          :not(:last-child) {
+            margin-right: 5px;
+          }
+        }
       }
     </style>
   </head>
   <body>
     <div class="controls">
       <label>
-        Max iterations:
+        <span>Max iterations:</span>
         <input id="max-iteration" type="number" value="100" min="1" step="1" />
+      </label>
+      <label>
+        <span>Scale:</span>
+        <input id="scale" type="number" value="250" min="1" step="1" />
       </label>
     </div>
     <canvas></canvas>
