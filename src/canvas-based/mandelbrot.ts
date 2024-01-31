@@ -1,8 +1,6 @@
 import { Color, ColorGradient } from "./ColorGradient";
 import { Vec2 } from "../Vec2";
 
-const MAX_ITERATION = 100;
-
 const colorGradient = new ColorGradient([
   { percent: 0, color: { r: 0, g: 0, b: 0 } },
   { percent: 50, color: { r: 255, g: 0, b: 0 } },
@@ -10,16 +8,14 @@ const colorGradient = new ColorGradient([
   { percent: 100, color: { r: 255, g: 255, b: 255 } },
 ]);
 
-export function getMandelbrotColor(c: Vec2): Color {
+export function getMandelbrotColor(c: Vec2, maxIteration: number): Color {
   const m = mandelbrot(c);
 
-  for (let i = 0; i <= MAX_ITERATION; i++) {
+  for (let i = 0; i <= maxIteration; i++) {
     const p = m.next().value;
 
     if (p.length() > 2) {
-      return colorGradient.getValue(
-        (100 * (MAX_ITERATION - i)) / MAX_ITERATION,
-      );
+      return colorGradient.getValue((100 * (maxIteration - i)) / maxIteration);
     }
   }
 
