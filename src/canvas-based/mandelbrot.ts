@@ -26,17 +26,7 @@ export function getMandelbrotColor(c: Vec2): Color {
   return { r: 0, g: 0, b: 0 };
 }
 
-export function mandelbrotIterations(iterations: number, c: Vec2): Vec2 {
-  let p = c;
-
-  for (let i = 0; i < iterations; i++) {
-    p = new Vec2(p.x * p.x - p.y * p.y, 2 * p.x * p.y).add(c);
-  }
-
-  return p;
-}
-
-function* mandelbrot(c: Vec2): Generator<Vec2, never> {
+export function* mandelbrot(c: Vec2): Generator<Vec2, never> {
   let p = c;
 
   while (true) {

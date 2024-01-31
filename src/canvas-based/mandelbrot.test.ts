@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { mandelbrotIterations } from "./mandelbrot";
+import { mandelbrot, mandelbrotIterations } from "./mandelbrot";
 import { Vec2 } from "../Vec2";
 
 describe("mandelbrotIterations", () => {
@@ -41,4 +41,15 @@ function testMandelbrotIterations(i: number, p: Vec2, expectedP: Vec2) {
   test(`${i} iterations of ${p.x} + ${p.y}i is equal to ${expectedP.x} + ${expectedP.y}i`, () => {
     expect(mandelbrotIterations(i, p)).toEqual(expectedP);
   });
+}
+
+function mandelbrotIterations(iterations: number, c: Vec2): Vec2 {
+  const m = mandelbrot(c);
+  let p = c;
+
+  for (let i = 0; i < iterations; i++) {
+    p = m.next().value;
+  }
+
+  return p;
 }
