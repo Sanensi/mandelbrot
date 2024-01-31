@@ -3,6 +3,10 @@ import { assert, throwError } from "../assertions";
 import { getMandelbrotColor } from "./mandelbrot";
 import { Color } from "./ColorGradient";
 
+const renderDurationInput =
+  (document.getElementById("render-duration") as HTMLInputElement) ??
+  throwError();
+
 const maxIterationInput =
   (document.getElementById("max-iteration") as HTMLInputElement) ??
   throwError();
@@ -70,7 +74,10 @@ function render() {
   }
 
   ctx.putImageData(imageData, 0, 0);
-  console.log("rendered in", performance.now() - start, "ms");
+  renderDurationInput.value = Intl.NumberFormat("en", {
+    style: "unit",
+    unit: "millisecond",
+  }).format(performance.now() - start);
 }
 
 function setPixel(imageData: ImageData, p: Vec2, { r, g, b }: Color, a = 255) {
