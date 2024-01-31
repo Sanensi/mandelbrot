@@ -8,6 +8,10 @@ const maxIterationInput =
   throwError();
 const scaleInput =
   (document.getElementById("scale") as HTMLInputElement) ?? throwError();
+const offsetXInput =
+  (document.getElementById("offset-x") as HTMLInputElement) ?? throwError();
+const offsetYInput =
+  (document.getElementById("offset-y") as HTMLInputElement) ?? throwError();
 
 const canvas = document.querySelector("canvas") ?? throwError();
 const ctx = canvas.getContext("2d") ?? throwError();
@@ -16,12 +20,10 @@ canvas.width = canvas.clientWidth;
 canvas.height = canvas.clientHeight;
 
 let maxIteration = Number.parseInt(maxIterationInput.value);
-const offset = new Vec2(canvas.width / 2, canvas.height / 2);
+let offset = new Vec2(canvas.width / 2, canvas.height / 2);
 let scale = Vec2.ONE.scale(Number.parseInt(scaleInput.value));
 
 const imageData = ctx.createImageData(canvas.width, canvas.height);
-
-render();
 
 maxIterationInput.addEventListener("change", () => {
   maxIteration = Number.parseInt(maxIterationInput.value);
@@ -32,6 +34,21 @@ scaleInput.addEventListener("change", () => {
   scale = Vec2.ONE.scale(Number.parseInt(scaleInput.value));
   render();
 });
+
+offsetXInput.value = offset.x.toString();
+offsetYInput.value = offset.y.toString();
+
+offsetXInput.addEventListener("change", () => {
+  offset = new Vec2(Number.parseFloat(offsetXInput.value), offset.y);
+  render();
+});
+
+offsetYInput.addEventListener("change", () => {
+  offset = new Vec2(offset.x, Number.parseFloat(offsetYInput.value));
+  render();
+});
+
+render();
 
 function render() {
   const start = performance.now();

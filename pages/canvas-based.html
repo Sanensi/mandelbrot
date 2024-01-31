@@ -21,7 +21,7 @@
 
         margin: 10px;
         padding: 5px;
-        background-color: white;
+        background-color: whitesmoke;
 
         :not(:last-child) {
           margin-bottom: 5px;
@@ -47,6 +47,14 @@
       <label>
         <span>Scale:</span>
         <input id="scale" type="number" value="250" min="1" step="1" />
+      </label>
+      <label>
+        <span>Offset X:</span>
+        <input id="offset-x" type="number" />
+      </label>
+      <label>
+        <span>Offset Y:</span>
+        <input id="offset-y" type="number" />
       </label>
     </div>
     <canvas></canvas>
