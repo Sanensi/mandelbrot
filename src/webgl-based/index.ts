@@ -5,21 +5,11 @@ import { createProgram } from "./program";
 import { setScreenGeometry, drawScreen } from "./screen";
 import { Vec2 } from "../Vec2";
 
-let animationFrameId = 0;
-
-type MouseState = {
-  previousPosition?: Vec2;
-};
-
 const canvas = document.querySelector("canvas") ?? throwError();
 canvas.width = canvas.clientWidth;
 canvas.height = canvas.clientHeight;
 
 const gl = canvas.getContext("webgl") ?? throwError();
-
-const mouseState: MouseState = {
-  previousPosition: undefined,
-};
 
 const gameState = {
   offset: new Vec2(canvas.width / 2, canvas.height / 2),
@@ -48,71 +38,8 @@ async function main() {
     POSITION_ATTRIBUTE_SIZE,
   );
 
-  startRenderLoop(() => {
-    gl.uniform2fv(offsetLocation, [gameState.offset.x, gameState.offset.y]);
-    gl.uniform2fv(scaleLocation, [gameState.scale.x, gameState.scale.y]);
+  gl.uniform2fv(offsetLocation, [gameState.offset.x, gameState.offset.y]);
+  gl.uniform2fv(scaleLocation, [gameState.scale.x, gameState.scale.y]);
 
-    drawScreen(gl, screenVertices, POSITION_ATTRIBUTE_SIZE);
-  });
-
-  const onMouseDown = (e: MouseEvent) => {
-    mouseState.previousPosition = new Vec2(e.clientX, e.clientY);
-  };
-
-  const onMouseMove = (e: MouseEvent) => {
-    if (mouseState.previousPosition) {
-      const p = new Vec2(e.clientX, e.clientY);
-      const delta = p
-        .substract(mouseState.previousPosition)
-        .divide(gameState.scale)
-        .scale(new Vec2(1, -1));
-      gameState.offset = gameState.offset.add(delta);
-    }
-  };
-
-  const onMouseUp = () => {
-    mouseState.previousPosition = undefined;
-  };
-
-  const onWheel = (e: WheelEvent) => {
-    if (e.deltaY < 0) {
-      gameState.scale = gameState.scale.scale(1.05);
-    } else {
-      gameState.scale = gameState.scale.scale(0.95);
-    }
-  };
-
-  const onWebglContextLost = (e: Event) => {
-    e.preventDefault();
-  };
-
-  const onWebglContextRestore = () => {
-    canvas.removeEventListener("mousedown", onMouseDown);
-    canvas.removeEventListener("mousemove", onMouseMove);
-    canvas.removeEventListener("mouseup", onMouseUp);
-    canvas.removeEventListener("wheel", onWheel);
-    canvas.removeEventListener("webglcontextlost", onWebglContextLost);
-    canvas.removeEventListener("webglcontextrestored", onWebglContextRestore);
-    cancelAnimationFrame(animationFrameId);
-    main();
-  };
-
-  canvas.addEventListener("mousedown", onMouseDown);
-  canvas.addEventListener("mousemove", onMouseMove);
-  canvas.addEventListener("mouseup", onMouseUp);
-  canvas.addEventListener("wheel", onWheel);
-  canvas.addEventListener("webglcontextlost", onWebglContextLost);
-  canvas.addEventListener("webglcontextrestored", onWebglContextRestore);
-}
-
-function startRenderLoop(render: (ms: number) => void) {
-  const renderLoop = (ms: number) => {
-    render(ms);
-    animationFrameId = requestAnimationFrame(renderLoop);
-  };
-  animationFrameId = requestAnimationFrame(renderLoop);
-}
-
-async function wait(ms: number) {
-  return new Promise<void>((resolve) => setTimeout(resolve, ms));
+  drawScreen(gl, screenVertices, POSITION_ATTRIBUTE_SIZE);
 }
