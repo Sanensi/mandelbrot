@@ -3,8 +3,8 @@ import { Vec2 } from "../Vec2";
 
 const colorGradient = new ColorGradient([
   { percent: 0, color: { r: 0, g: 0, b: 0 } },
-  { percent: 50, color: { r: 255, g: 0, b: 0 } },
-  { percent: 75, color: { r: 128, g: 128, b: 255 } },
+  { percent: 33, color: { r: 255, g: 0, b: 0 } },
+  { percent: 66, color: { r: 128, g: 128, b: 255 } },
   { percent: 100, color: { r: 255, g: 255, b: 255 } },
 ]);
 
