@@ -1,7 +1,7 @@
-import { defineConfig, IndexHtmlTransformHook } from "vite";
+import { UserConfig, defineConfig } from "vite";
 import { resolve } from "path";
 
-const config = defineConfig({
+const config: UserConfig = defineConfig({
   base: "mandelbrot",
   build: {
     rollupOptions: {
