@@ -1,7 +1,8 @@
-import { defineConfig } from "vite";
+import { defineConfig, IndexHtmlTransformHook } from "vite";
 import { resolve } from "path";
 
-export default defineConfig({
+const config = defineConfig({
+  base: "mandelbrot",
   build: {
     rollupOptions: {
       input: {
@@ -11,4 +12,14 @@ export default defineConfig({
       },
     },
   },
+  plugins: [
+    {
+      name: "prepend-base-url-to-anchor",
+      transformIndexHtml: (html) => {
+        return html.replace(/<a href="\//g, `<a href="/${config.base}/`);
+      },
+    },
+  ],
 });
+
+export default config;
