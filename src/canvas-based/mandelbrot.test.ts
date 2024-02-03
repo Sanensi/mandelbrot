@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { mandelbrot, mandelbrotIterations } from "./mandelbrot";
+import { mandelbrot } from "./mandelbrot";
 import { Vec2 } from "../Vec2";
 
 describe("mandelbrotIterations", () => {
