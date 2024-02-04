@@ -2,6 +2,10 @@ precision mediump float;
 
 vec4 getMandelbrotColor(vec2 c);
 vec4 colorGradient(const float value);
+vec2 canvasToMandelbrotCoord(const vec2 canvasCoord);
+
+uniform vec2 CANVAS_SIZE;
+vec2 CANVAS_OFFSET = CANVAS_SIZE / vec2(2);
 
 uniform vec2 offset;
 uniform vec2 scale;
@@ -9,7 +13,7 @@ uniform vec2 scale;
 const int MAX_ITERATION = 100;
 
 void main() {
-  vec2 c = (gl_FragCoord.xy - offset) / scale;
+  vec2 c = canvasToMandelbrotCoord(gl_FragCoord.xy);
   gl_FragColor = getMandelbrotColor(c);
 }
 
@@ -37,4 +41,8 @@ vec4 colorGradient(const float value) {
   color = mix(color, vec3(1.0, 1.0, 1.0), blue_to_white);
 
   return vec4(color, 1.0);
+}
+
+vec2 canvasToMandelbrotCoord(const vec2 canvasCoord) {
+  return (canvasCoord - CANVAS_OFFSET) / scale - offset;
 }

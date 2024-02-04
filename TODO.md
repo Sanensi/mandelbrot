@@ -1,5 +1,7 @@
 # Todo
 
+- Move initial offset value to html
+
 ## Ideas
 
 - Refactor the application to toggle between webgl and canvas based rendering using the same base ui

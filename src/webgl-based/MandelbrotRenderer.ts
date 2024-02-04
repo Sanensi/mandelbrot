@@ -19,6 +19,12 @@ export class MandelbrotRenderer {
     const program = createProgram(gl, vertexShaderSource, fragmentShaderSource);
     gl.useProgram(program);
 
+    const canvasSizeLocation = gl.getUniformLocation(program, "CANVAS_SIZE");
+    gl.uniform2fv(canvasSizeLocation, [
+      this.gl.canvas.width,
+      this.gl.canvas.height,
+    ]);
+
     this.offsetLocation = gl.getUniformLocation(program, "offset");
     this.scaleLocation = gl.getUniformLocation(program, "scale");
 
@@ -48,7 +54,7 @@ export class MandelbrotRenderer {
   }
 
   render(offset: Vec2, scale: Vec2) {
-    this.gl.uniform2fv(this.offsetLocation, [offset.x, offset.y]);
+    this.gl.uniform2fv(this.offsetLocation, [offset.x, -offset.y]);
     this.gl.uniform2fv(this.scaleLocation, [scale.x, scale.y]);
     this.drawScreen();
   }

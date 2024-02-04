@@ -13,10 +13,47 @@
         height: 100%;
         display: block;
       }
+
+      .controls {
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+
+        margin: 10px;
+        padding: 5px;
+        background-color: whitesmoke;
+
+        :not(:last-child) {
+          margin-bottom: 5px;
+        }
+
+        label {
+          display: flex;
+          justify-content: space-between;
+
+          :not(:last-child) {
+            margin-right: 5px;
+          }
+        }
+      }
     </style>
   </head>
   <body>
-    <canvas></canvas>
+    <div class="controls">
+      <label>
+        <span>Scale:</span>
+        <input id="scale" type="number" value="250" min="1" />
+      </label>
+      <label>
+        <span>Offset X:</span>
+        <input id="offset-x" type="number" />
+      </label>
+      <label>
+        <span>Offset Y:</span>
+        <input id="offset-y" type="number" />
+      </label>
+    </div>
+    <canvas tabindex="0"></canvas>
     <script type="module" src="/src/webgl-based/index.ts"></script>
   </body>
 </html>
