@@ -9,6 +9,7 @@ const SCREEN_VERTICES = [-1.0, -1.0, 1.0, -1.0, -1.0, 1.0, 1.0, 1.0];
 export class MandelbrotRenderer {
   private readonly gl: WebGLRenderingContext;
 
+  private readonly maxIterationLocation: WebGLUniformLocation | null;
   private readonly offsetLocation: WebGLUniformLocation | null;
   private readonly scaleLocation: WebGLUniformLocation | null;
   private readonly positionAttributeLocation: number;
@@ -25,6 +26,7 @@ export class MandelbrotRenderer {
       this.gl.canvas.height,
     ]);
 
+    this.maxIterationLocation = gl.getUniformLocation(program, "maxIteration");
     this.offsetLocation = gl.getUniformLocation(program, "offset");
     this.scaleLocation = gl.getUniformLocation(program, "scale");
 
@@ -53,7 +55,8 @@ export class MandelbrotRenderer {
     );
   }
 
-  render(offset: Vec2, scale: Vec2) {
+  render(maxIteration: number, offset: Vec2, scale: Vec2) {
+    this.gl.uniform1i(this.maxIterationLocation, maxIteration);
     this.gl.uniform2fv(this.offsetLocation, [offset.x, -offset.y]);
     this.gl.uniform2fv(this.scaleLocation, [scale.x, scale.y]);
     this.drawScreen();

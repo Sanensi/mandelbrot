@@ -10,7 +10,8 @@ vec2 CANVAS_OFFSET = CANVAS_SIZE / vec2(2);
 uniform vec2 offset;
 uniform vec2 scale;
 
-const int MAX_ITERATION = 100;
+const int MAX_ITERATION = 100000;
+uniform int maxIteration;
 
 void main() {
   vec2 c = canvasToMandelbrotCoord(gl_FragCoord.xy);
@@ -21,10 +22,14 @@ vec4 getMandelbrotColor(vec2 c) {
   vec2 p = c;
 
   for(int i = 0; i <= MAX_ITERATION; i++) {
+    if(i > maxIteration) {
+      break;
+    }
+
     p = vec2(p.x * p.x - p.y * p.y, 2.0 * p.x * p.y) + c;
 
     if(length(p) > 2.0) {
-      return colorGradient(float(MAX_ITERATION - i) / float(MAX_ITERATION));
+      return colorGradient(float(maxIteration - i) / float(maxIteration));
     }
   }
 

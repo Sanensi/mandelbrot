@@ -2,6 +2,9 @@ import { throwError } from "../assertions";
 import { Vec2 } from "../Vec2";
 import { MandelbrotRenderer } from "./MandelbrotRenderer";
 
+const maxIterationInput =
+  (document.getElementById("max-iteration") as HTMLInputElement) ??
+  throwError();
 const scaleInput =
   (document.getElementById("scale") as HTMLInputElement) ?? throwError();
 const offsetXInput =
@@ -18,12 +21,18 @@ const CANVAS_OFFSET = new Vec2(canvas.width / 2, canvas.height / 2);
 
 const gl = canvas.getContext("webgl") ?? throwError();
 
+let maxIteration = Number.parseInt(maxIterationInput.value);
 let offset = Vec2.ZERO;
 let scale = Vec2.ONE.scale(Number.parseInt(scaleInput.value));
 
 const mandelbrot = new MandelbrotRenderer(gl);
 
 render();
+
+maxIterationInput.addEventListener("change", () => {
+  maxIteration = Number.parseInt(maxIterationInput.value);
+  render();
+});
 
 scaleInput.addEventListener("change", () => {
   scale = Vec2.ONE.scale(Number.parseInt(scaleInput.value));
@@ -77,7 +86,7 @@ canvas.addEventListener("keypress", (e) => {
 });
 
 function render() {
-  mandelbrot.render(offset, scale);
+  mandelbrot.render(maxIteration, offset, scale);
 }
 
 function canvasToMandelbrotCoord(p: Vec2) {
