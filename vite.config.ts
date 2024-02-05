@@ -1,5 +1,6 @@
 import { UserConfig, defineConfig } from "vite";
 import { resolve } from "path";
+import wasm from "vite-plugin-wasm";
 
 const config: UserConfig = defineConfig({
   base: "mandelbrot",
@@ -13,6 +14,7 @@ const config: UserConfig = defineConfig({
     },
   },
   plugins: [
+    wasm(),
     {
       name: "prepend-base-url-to-anchor",
       transformIndexHtml: (html) => {
