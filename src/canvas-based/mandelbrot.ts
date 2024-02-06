@@ -15,7 +15,7 @@ export function getMandelbrotColor(c: Vec2, maxIteration: number): Color {
     const p = m.next().value;
 
     if (p.length() > 2) {
-      return colorGradient.getValue((100 * (maxIteration - i)) / maxIteration);
+      return colorGradient.getValue(100 * (1 - i / maxIteration));
     }
   }
 
