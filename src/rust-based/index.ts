@@ -3,6 +3,20 @@ import { throwError, assert } from "../assertions";
 import { Color } from "../canvas-based/ColorGradient";
 import { get_mandelbrot_color, create_vec2 } from "wasm";
 
+const renderDurationInput =
+  (document.getElementById("render-duration") as HTMLInputElement) ??
+  throwError();
+
+const maxIterationInput =
+  (document.getElementById("max-iteration") as HTMLInputElement) ??
+  throwError();
+const scaleInput =
+  (document.getElementById("scale") as HTMLInputElement) ?? throwError();
+const offsetXInput =
+  (document.getElementById("offset-x") as HTMLInputElement) ?? throwError();
+const offsetYInput =
+  (document.getElementById("offset-y") as HTMLInputElement) ?? throwError();
+
 const canvas = document.querySelector("canvas") ?? throwError();
 const ctx = canvas.getContext("2d") ?? throwError();
 
@@ -11,11 +25,65 @@ canvas.height = canvas.clientHeight;
 
 const CANVAS_OFFSET = new Vec2(canvas.width / 2, canvas.height / 2);
 
-let maxIteration = 100;
+let maxIteration = Number.parseInt(maxIterationInput.value);
 let offset = Vec2.ZERO;
-let scale = Vec2.ONE.scale(250);
+let scale = Vec2.ONE.scale(Number.parseInt(scaleInput.value));
 
 const imageData = ctx.createImageData(canvas.width, canvas.height);
+
+maxIterationInput.addEventListener("change", () => {
+  maxIteration = Number.parseInt(maxIterationInput.value);
+  render();
+});
+
+scaleInput.addEventListener("change", () => {
+  scale = Vec2.ONE.scale(Number.parseInt(scaleInput.value));
+  render();
+});
+
+offsetXInput.value = offset.x.toString();
+offsetYInput.value = offset.y.toString();
+
+offsetXInput.addEventListener("change", () => {
+  offset = new Vec2(Number.parseFloat(offsetXInput.value), offset.y);
+  render();
+});
+
+offsetYInput.addEventListener("change", () => {
+  offset = new Vec2(offset.x, Number.parseFloat(offsetYInput.value));
+  render();
+});
+
+canvas.addEventListener("click", (e) => {
+  const p = new Vec2(e.clientX, e.clientY);
+  const p_prime = canvasToMandelbrotCoord(p);
+  console.log(p_prime);
+});
+
+canvas.addEventListener("contextmenu", (e) => {
+  e.preventDefault();
+  const p = new Vec2(e.clientX, e.clientY);
+  const p_prime = canvasToMandelbrotCoord(p);
+
+  offset = p_prime.scale(-1);
+  offsetXInput.value = offset.x.toString();
+  offsetYInput.value = offset.y.toString();
+  render();
+});
+
+canvas.addEventListener("keypress", (e) => {
+  switch (e.key) {
+    case "+":
+      scale = scale.scale(1.25);
+      break;
+    case "-":
+      scale = scale.scale(0.75);
+      break;
+  }
+
+  scaleInput.value = scale.x.toString();
+  render();
+});
 
 render();
 
@@ -36,12 +104,10 @@ function render() {
   }
 
   ctx.putImageData(imageData, 0, 0);
-  console.log(
-    Intl.NumberFormat("en", {
-      style: "unit",
-      unit: "millisecond",
-    }).format(performance.now() - start),
-  );
+  renderDurationInput.value = Intl.NumberFormat("en", {
+    style: "unit",
+    unit: "millisecond",
+  }).format(performance.now() - start);
 }
 
 function setPixel(imageData: ImageData, p: Vec2, { r, g, b }: Color, a = 255) {
