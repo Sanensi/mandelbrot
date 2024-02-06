@@ -1,7 +1,7 @@
 import { Vec2 } from "../Vec2";
 import { throwError, assert } from "../assertions";
 import { Color } from "../canvas-based/ColorGradient";
-import { getMandelbrotColor } from "../canvas-based/mandelbrot";
+import { get_mandelbrot_color, create_vec2 } from "wasm";
 
 const canvas = document.querySelector("canvas") ?? throwError();
 const ctx = canvas.getContext("2d") ?? throwError();
@@ -25,8 +25,13 @@ function render() {
     for (let x = 0; x < canvas.width; x++) {
       const p = new Vec2(x, y);
       const p_prime = canvasToMandelbrotCoord(p);
-      const color = getMandelbrotColor(p_prime, maxIteration);
+
+      const color = get_mandelbrot_color(
+        create_vec2(p_prime.x, p_prime.y),
+        maxIteration,
+      );
       setPixel(imageData, p, color);
+      color.free();
     }
   }
 
