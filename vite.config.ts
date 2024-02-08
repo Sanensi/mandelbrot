@@ -12,6 +12,7 @@ const config: UserConfig = defineConfig({
         canvas: resolve(__dirname, "pages", "canvas-based.html"),
         rust: resolve(__dirname, "pages", "rust-based.html"),
         webgl: resolve(__dirname, "pages", "webgl-based.html"),
+        worker: resolve(__dirname, "pages", "worker-based.html"),
       },
     },
   },
