@@ -1,6 +1,6 @@
 import { Vec2 } from "../Vec2";
 import { throwError, assert } from "../assertions";
-import { Color } from "../canvas-based/ColorGradient";
+import { Color } from "../canvas-based/Color";
 import { get_mandelbrot_color, create_vec2 } from "wasm";
 
 const renderDurationInput =

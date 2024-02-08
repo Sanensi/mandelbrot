@@ -1,4 +1,4 @@
-import { Color } from "../canvas-based/ColorGradient";
+import { Color } from "../canvas-based/Color";
 import { Vec2 } from "../Vec2";
 import { assert, throwError } from "../assertions";
 import { getMandelbrotColor } from "../canvas-based/mandelbrot";

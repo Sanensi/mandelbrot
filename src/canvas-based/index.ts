@@ -1,7 +1,7 @@
 import { Vec2 } from "../Vec2";
 import { assert, throwError } from "../assertions";
 import { getMandelbrotColor } from "./mandelbrot";
-import { Color } from "./ColorGradient";
+import { Color } from "./Color";
 
 const renderDurationInput =
   (document.getElementById("render-duration") as HTMLInputElement) ??
