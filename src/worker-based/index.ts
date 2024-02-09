@@ -1,7 +1,11 @@
 import { Color } from "../canvas-based/Color";
 import { Vec2 } from "../Vec2";
-import { assert, throwError } from "../assertions";
-import { getMandelbrotColor_w } from "./mandelbrot";
+import { throwError } from "../assertions";
+import {
+  CanvasMandelbrotMapping,
+  MandelbrotColor,
+  getMandelbrotColors,
+} from "./mandelbrot";
 
 const renderDurationInput =
   (document.getElementById("render-duration") as HTMLInputElement) ??
@@ -90,23 +94,30 @@ render();
 async function render() {
   const start = performance.now();
 
-  const promises: Promise<Color>[] = [];
-
+  const coords = new Array<CanvasMandelbrotMapping>();
   for (let y = 0; y < canvas.height; y++) {
     for (let x = 0; x < canvas.width; x++) {
-      const p = new Vec2(x, y);
-      const p_prime = canvasToMandelbrotCoord(p);
-      promises.push(getMandelbrotColor_w(p_prime, maxIteration));
+      const canvasCoord = new Vec2(x, y);
+      const mandelbrotCoord = canvasToMandelbrotCoord(canvasCoord);
+      coords.push({ canvasCoord, mandelbrotCoord });
     }
   }
 
-  (await Promise.all(promises)).forEach((color, i) => {
-    const p = new Vec2({
-      x: i % imageData.width,
-      y: Math.floor(i / imageData.width),
-    });
-    setPixel(imageData, p, color);
-  });
+  const promises = new Array<Promise<MandelbrotColor[]>>();
+
+  const workerCount = 16;
+  const sliceSize = Math.ceil(coords.length / workerCount);
+  for (let i = 0; i < workerCount; i++) {
+    const slice = coords.slice(i * sliceSize, (i + 1) * sliceSize);
+    promises.push(getMandelbrotColors(slice, maxIteration));
+  }
+
+  const result = await Promise.all(promises);
+  for (const slice of result) {
+    for (const { canvasCoord, color } of slice) {
+      setPixel(imageData, canvasCoord, color);
+    }
+  }
 
   ctx.putImageData(imageData, 0, 0);
   renderDurationInput.value = Intl.NumberFormat("en", {
@@ -116,11 +127,6 @@ async function render() {
 }
 
 function setPixel(imageData: ImageData, p: Vec2, { r, g, b }: Color, a = 255) {
-  assert(0 <= r && r <= 255);
-  assert(0 <= g && g <= 255);
-  assert(0 <= b && b <= 255);
-  assert(0 <= a && a <= 255);
-
   const i = 4 * (p.y * imageData.width + p.x);
   imageData.data[i] = r;
   imageData.data[i + 1] = g;

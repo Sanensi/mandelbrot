@@ -1,7 +1,12 @@
-import { Vec2 } from "../Vec2";
+import { Point, Vec2 } from "../Vec2";
 import { getMandelbrotColor } from "../canvas-based/mandelbrot";
 
-addEventListener("message", ({ data: { c, maxIteration } }) => {
-  const color = getMandelbrotColor(new Vec2(c), maxIteration);
-  postMessage(color);
-});
+addEventListener(
+  "message",
+  (e: MessageEvent<{ slice: Point[]; maxIteration: number }>) => {
+    const colors = e.data.slice.map((coord) =>
+      getMandelbrotColor(new Vec2(coord), e.data.maxIteration),
+    );
+    postMessage(colors);
+  },
+);
