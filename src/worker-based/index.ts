@@ -4,6 +4,7 @@ import { throwError } from "../assertions";
 import {
   CanvasMandelbrotMapping,
   MandelbrotColor,
+  WORKER_COUNT,
   getMandelbrotColors,
 } from "./mandelbrot";
 
@@ -105,9 +106,8 @@ async function render() {
 
   const promises = new Array<Promise<MandelbrotColor[]>>();
 
-  const workerCount = 16;
-  const sliceSize = Math.ceil(coords.length / workerCount);
-  for (let i = 0; i < workerCount; i++) {
+  const sliceSize = Math.ceil(coords.length / WORKER_COUNT);
+  for (let i = 0; i < WORKER_COUNT; i++) {
     const slice = coords.slice(i * sliceSize, (i + 1) * sliceSize);
     promises.push(getMandelbrotColors(slice, maxIteration));
   }
