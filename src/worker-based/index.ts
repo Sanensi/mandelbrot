@@ -1,7 +1,7 @@
 import { Color } from "../canvas-based/Color";
 import { Vec2 } from "../Vec2";
 import { assert, throwError } from "../assertions";
-import { getMandelbrotColor } from "../canvas-based/mandelbrot";
+import { getMandelbrotColor_w } from "./mandelbrot";
 
 const renderDurationInput =
   (document.getElementById("render-duration") as HTMLInputElement) ??
@@ -87,16 +87,26 @@ canvas.addEventListener("keypress", (e) => {
 
 render();
 
-function render() {
+async function render() {
   const start = performance.now();
+
+  const promises: Promise<Color>[] = [];
+
   for (let y = 0; y < canvas.height; y++) {
     for (let x = 0; x < canvas.width; x++) {
       const p = new Vec2(x, y);
       const p_prime = canvasToMandelbrotCoord(p);
-      const color = getMandelbrotColor(p_prime, maxIteration);
-      setPixel(imageData, p, color);
+      promises.push(getMandelbrotColor_w(p_prime, maxIteration));
     }
   }
+
+  (await Promise.all(promises)).forEach((color, i) => {
+    const p = new Vec2({
+      x: i % imageData.width,
+      y: Math.floor(i / imageData.width),
+    });
+    setPixel(imageData, p, color);
+  });
 
   ctx.putImageData(imageData, 0, 0);
   renderDurationInput.value = Intl.NumberFormat("en", {
